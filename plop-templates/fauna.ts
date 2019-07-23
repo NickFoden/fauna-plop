@@ -3,19 +3,19 @@ import faunadb, { query as q } from "faunadb";
 // See file .env-fauna in root and follow instructions
 const client = new faunadb.Client({ secret: process.env.REACT_APP_FAUNA_KEY });
 
-const addNewClass = async (newClass: string) => {
+const addNewCollection = async (newCollection: string) => {
   try {
-    const ret = await client.query(q.CreateClass({ name: newClass }));
+    const ret = await client.query(q.CreateCollection({ name: newCollection }));
     return ret;
   } catch (err) {
     return console.error(err);
   }
 };
 
-const addSingleRecord = async (className: string, itemObj: object) => {
+const addSingleRecord = async (collectionName: string, itemObj: object) => {
   try {
     const ret = await client.query(
-      q.Create(q.Class(className), { data: { itemObj } })
+      q.Create(q.Collection(collectionName), { data: { itemObj } })
     );
     return ret;
   } catch (err) {
@@ -23,19 +23,27 @@ const addSingleRecord = async (className: string, itemObj: object) => {
   }
 };
 
-const getSingleRecordByRef = async (className: string, itemRef: string) => {
+const getSingleRecordByRef = async (
+  collectionName: string,
+  itemRef: string
+) => {
   try {
-    const ret = await client.query(q.Get(q.Ref(q.Class(className), itemRef)));
+    const ret = await client.query(
+      q.Get(q.Ref(q.Collection(collectionName), itemRef))
+    );
     return ret;
   } catch (err) {
     return console.error(err);
   }
 };
 
-const deleteSingleRecordByRef = async (className: string, itemRef: string) => {
+const deleteSingleRecordByRef = async (
+  collectionName: string,
+  itemRef: string
+) => {
   try {
     const ret = await client.query(
-      q.Delete(q.Ref(q.Class(className), itemRef))
+      q.Delete(q.Ref(q.Collection(collectionName), itemRef))
     );
     console.log("Deleted: " + itemRef);
     return ret;
@@ -45,7 +53,7 @@ const deleteSingleRecordByRef = async (className: string, itemRef: string) => {
 };
 
 export {
-  addNewClass,
+  addNewCollection,
   addSingleRecord,
   deleteSingleRecordByRef,
   getSingleRecordByRef,
